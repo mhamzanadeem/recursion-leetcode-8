@@ -1,23 +1,34 @@
-# Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
+# LeetCode 2095 - Delete the Middle Node of a Linked List (Recursive)
+# Base Case: head is None or head.next is None (0 or 1 node)
+# Recursive Case: use a counter to find the middle, delete it
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
 class Solution:
-    def deleteMiddle(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        # Edge case: if list has only one node, return None
-        if head is None or head.next is None:
+    def deleteMiddle(self, head: ListNode) -> ListNode:
+        # Base case: 0 or 1 node
+        if not head or not head.next:
             return None
-        
-        # Recursive helper that returns the node to delete
-        def delete_middle_helper(slow: ListNode, fast: ListNode, prev: ListNode = None) -> ListNode:
-            # Base case: fast reached the end
-            if fast is None or fast.next is None:
-                # Delete the middle node (slow)
-                prev.next = slow.next
-                return head
-            
-            # Recursive case: move slow one step and fast two steps
-            return delete_middle_helper(slow.next, fast.next.next, slow)
-        
-        return delete_middle_helper(head, head)
+
+        # Count total nodes
+        def count_nodes(node: ListNode) -> int:
+            if not node:
+                return 0
+            return 1 + count_nodes(node.next)
+
+        total = count_nodes(head)
+        middle = total // 2
+
+        # Recursively find and delete middle node
+        def recurse(node: ListNode, index: int) -> ListNode:
+            if index == middle - 1:
+                # Skip the middle node
+                node.next = node.next.next
+                return node
+            node.next = recurse(node.next, index + 1)
+            return node
+
+        return recurse(head, 0)

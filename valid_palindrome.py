@@ -1,25 +1,19 @@
+# LeetCode 125 - Valid Palindrome (Recursive)
+# Base Case: left >= right (all characters checked)
+# Recursive Case: compare s[left] and s[right], recurse with left+1, right-1
+
 class Solution:
     def isPalindrome(self, s: str) -> bool:
-        # Helper recursive function
-        def helper(left: int, right: int, chars: str) -> bool:
-            # Base case: if pointers cross, it's a palindrome
+        cleaned = ''.join(c.lower() for c in s if c.isalnum())
+
+        def recurse(left: int, right: int) -> bool:
+            # Base case: pointers met or crossed
             if left >= right:
                 return True
-            
-            # Skip non-alphanumeric characters from left
-            if not chars[left].isalnum():
-                return helper(left + 1, right, chars)
-            
-            # Skip non-alphanumeric characters from right
-            if not chars[right].isalnum():
-                return helper(left, right - 1, chars)
-            
-            # Compare characters (case insensitive)
-            if chars[left].lower() != chars[right].lower():
+            # Characters don't match
+            if cleaned[left] != cleaned[right]:
                 return False
-            
-            # Move both pointers inward
-            return helper(left + 1, right - 1, chars)
-        
-        # Start recursion with the whole string
-        return helper(0, len(s) - 1, s)
+            # Recursive case: check inner substring
+            return recurse(left + 1, right - 1)
+
+        return recurse(0, len(cleaned) - 1)
